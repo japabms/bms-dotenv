@@ -3,16 +3,6 @@
 
 #include <stdio.h>
 
-// TODO(victor): Use hashmap
-// TODO(victor): Create a hashmap...
-typedef struct variable_t{
-	char* key;
-	char* value;
-} variable_t;
-
-static int variables_count = 0;
-static variable_t* variables = NULL;
-
 
 //
 // Will retrieve the values from the .env file
@@ -30,10 +20,5 @@ int bms_dotenv_init(char* path);
 // Will return NULL if can't get it.
 //
 char* bms_dotenv_get(char* key);
-
-//
-// Cleanup memory allocated from dotenv_init()
-//
-void bms_dotenv_finalize();
 
 #endif // !BMS_DOTENV_H

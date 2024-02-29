@@ -7,11 +7,21 @@
 #include <unistd.h>
 #include <ctype.h>
 
+// TODO(victor): Use hashmap
+// TODO(victor): Create a hashmap...
+//
+typedef struct variable_t{
+	char* key;
+	char* value;
+} variable_t;
+
+static int bms_dotenv_variables_count = 0;
+static variable_t bms_dotenv_variables[256] = {0};
 
 int parse_dotenv(char* buffer) {
 	char* buffer_copy = strdup(buffer);
 
-	char** lines = calloc(100, sizeof(char*));
+	char** lines = calloc(256 , sizeof(char*));
 
 	char *token;
 	token = strtok(buffer_copy, "\n");
@@ -75,7 +85,7 @@ int parse_dotenv(char* buffer) {
 		}
 		
 		variable_t var = {key, value};
-		variables[variables_count++] = var;
+		bms_dotenv_variables[bms_dotenv_variables_count++] = var;
 	}
 
 	free(lines);
@@ -84,7 +94,7 @@ int parse_dotenv(char* buffer) {
 }
 
 int bms_dotenv_init(char* path) {
-	char buffer[8192];
+	char buffer[66536];
 
 	if(path == NULL) {
 		path = ".env";
@@ -106,52 +116,27 @@ int bms_dotenv_init(char* path) {
 		return -1;
 	}
 
-	variables = calloc(50, sizeof(variable_t));
-
 	if(parse_dotenv(buffer) < 0) {
 		fprintf(stderr, "[ERROR] In function parse_dotenv(). Error while parsing file\n");
-		bms_dotenv_finalize();
 		return -1;
 	}
 
-	if(variables_count == 0) {
+	if(bms_dotenv_variables_count == 0) {
 		fprintf(stderr, "[ERROR] Can't not parse any line\n");
-		bms_dotenv_finalize();
 		return -1;
 	}
 
 	return 0;
 }
 
-void bms_dotenv_finalize() {
-	free(variables);
-}
-
-static int bms_list_variables() {
-	if (variables == NULL) {
-		fprintf(stderr, "[ERROR] .env is not initialized!\nYou must call bms_init_dotenv() first.\n");
-		return -1;
-	}
-
-	for(int i = 0; i < variables_count; i++) {
-		printf("%s: %s\n", variables[i].key, variables[i].value);
-	}
-
-	return 0;
-}
 
 // TODO(victor): Use hashmap, for better search
 // TODO(victor): Create a hashmap...
 
 char* bms_dotenv_get(char* s) {
-	if (variables == NULL) {
-		fprintf(stderr, "[ERROR] .env is not initialized!\nYou must call bms_init_dotenv() first.\n");
-		return NULL;
-	}
-
-	for(int i = 0; i < variables_count; i++) {
-		if(strcmp(variables[i].key, s) == 0) {
-			return variables[i].value;
+	for(int i = 0; i < bms_dotenv_variables_count; i++) {
+		if(strcmp(bms_dotenv_variables[i].key, s) == 0) {
+			return bms_dotenv_variables[i].value;
 		}
 	}
 
