@@ -16,7 +16,7 @@ make build
 
 To install:
 ```
-sudo make install
+sudo make
 ```
 If you install it, you can link it with the flag -lbmsdotenv when compiling.
 
@@ -40,6 +40,11 @@ int main(int argc, char *argv[])
 	char* api_key = bms_dotenv_get("API_KEY");
 	char* api_url = bms_dotenv_get("API_URL");
 
+	// will clear all memory allocated from bms_dotenv_init();
+	// and will clear the values from api_url and api_key
+	bms_dotenv_finalize(); 
+	// use strdup(bms_dotenv_get("KEY")); for the memory "persist"
+	// after the finalize
 
 	return EXIT_SUCCESS;
 }
