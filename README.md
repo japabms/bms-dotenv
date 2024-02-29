@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
 	char* api_key = bms_dotenv_get("API_KEY");
 	char* api_url = bms_dotenv_get("API_URL");
 
-	bms_dotenv_finalize(); // will free api_key and api_url values.
 
 	return EXIT_SUCCESS;
 }
