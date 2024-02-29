@@ -1,5 +1,6 @@
 # C .env parser  
 
+- It will not put the .env variables to the actual system environment, just read the file, store the values in memory and you can retrieve it with the `bms_dotenv_get()`.
 - Will find a .env file and will load the values from it. The values must me KEY=VALUE, without any space. And it will not remove quotes from VALUES.
 - Support comment with #.
 - It will probably only work in Unix systems.
@@ -17,7 +18,7 @@ To install:
 ```
 sudo make install
 ```
-If you install it, you can link it with the flag -lbmsdotenv.
+If you install it, you can link it with the flag -lbmsdotenv when compiling.
 
 ## Usage
 
