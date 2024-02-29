@@ -18,3 +18,29 @@ To install:
 sudo make install
 ```
 If you install it, you can link it with the flag -lbmsdotenv.
+
+## Usage
+
+.env
+```
+# API
+API_KEY=1234567890abcdefghijklmnopqrstuvwxyz
+API_URL=https://api.exemplo.com/v1
+```
+
+main.c
+```c
+#include <bms_dotenv.h>
+
+int main(int argc, char *argv[])
+{
+
+	bms_dotenv_init(NULL);
+	char* api_key = bms_dotenv_get("API_KEY");
+	char* api_url = bms_dotenv_get("API_URL");
+
+	bms_dotenv_finalize(); // will free api_key and api_url values.
+
+	return EXIT_SUCCESS;
+}
+```
