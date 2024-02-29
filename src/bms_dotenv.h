@@ -17,8 +17,13 @@ int bms_dotenv_init(char* path);
 // Key is case sensitive, so you must type the exact value from .env file
 // to get the correct value
 //
-// Will return NULL if can't get it.
+// Will return NULL if can't get it or if bms_dotenv_init() is not called;
 //
 char* bms_dotenv_get(char* key);
+
+//
+// Cleanup memory allocated from dotenv_init()
+//
+void bms_dotenv_finalize();
 
 #endif // !BMS_DOTENV_H

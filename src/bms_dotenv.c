@@ -16,12 +16,12 @@ typedef struct variable_t{
 } variable_t;
 
 static int bms_dotenv_variables_count = 0;
-static variable_t bms_dotenv_variables[256] = {0};
+static variable_t** bms_dotenv_variables = NULL;
 
 int parse_dotenv(char* buffer) {
 	char* buffer_copy = strdup(buffer);
 
-	char** lines = calloc(256 , sizeof(char*));
+	char** lines = calloc(128 , sizeof(char*));
 
 	char *token;
 	token = strtok(buffer_copy, "\n");
@@ -84,17 +84,21 @@ int parse_dotenv(char* buffer) {
 			continue;
 		}
 		
-		variable_t var = {key, value};
+		variable_t* var = calloc(1, sizeof(variable_t));
+		var->key = strdup(key);
+		var->value = strdup(value);
+
 		bms_dotenv_variables[bms_dotenv_variables_count++] = var;
 	}
 
 	free(lines);
+	free(buffer_copy);
 
 	return 0;
 }
 
 int bms_dotenv_init(char* path) {
-	char buffer[66536];
+	char buffer[16384] = {0};
 
 	if(path == NULL) {
 		path = ".env";
@@ -116,6 +120,7 @@ int bms_dotenv_init(char* path) {
 		return -1;
 	}
 
+	bms_dotenv_variables = calloc(64, sizeof(variable_t*));
 	if(parse_dotenv(buffer) < 0) {
 		fprintf(stderr, "[ERROR] In function parse_dotenv(). Error while parsing file\n");
 		return -1;
@@ -129,14 +134,26 @@ int bms_dotenv_init(char* path) {
 	return 0;
 }
 
+void bms_dotenv_finalize() {
+	for(int i = 0; i < bms_dotenv_variables_count; i++) {
+		free(bms_dotenv_variables[i]->key);
+		free(bms_dotenv_variables[i]->value);
+		free(bms_dotenv_variables[i]);
+	}
+	free(bms_dotenv_variables);
+}
 
 // TODO(victor): Use hashmap, for better search
 // TODO(victor): Create a hashmap...
 
 char* bms_dotenv_get(char* s) {
+	if(bms_dotenv_variables == NULL) {
+		fprintf(stderr, "[ERROR] In bms_dotenv_get(), variables are not initialize. Try to call bms_dotenv_init()\n");
+		return NULL;
+	} 
 	for(int i = 0; i < bms_dotenv_variables_count; i++) {
-		if(strcmp(bms_dotenv_variables[i].key, s) == 0) {
-			return bms_dotenv_variables[i].value;
+		if(strcmp(bms_dotenv_variables[i]->key, s) == 0) {
+			return bms_dotenv_variables[i]->value;
 		}
 	}
 
