@@ -26,6 +26,7 @@ int parse_dotenv(char* buffer) {
 			token = strtok(NULL, "\n");
 			if(token == NULL) {
 				free(buffer_copy);
+				free(lines);
 				fprintf(stderr, "[ERROR] No lines found to parse\n");
 				return -1;
 			}
@@ -73,16 +74,11 @@ int parse_dotenv(char* buffer) {
 			continue;
 		}
 		
-		variable_t* var = calloc(1, sizeof(variable_t));
-		if(var == NULL) {
-			fprintf(stderr, "Out of memory");
-			return -1;
-		}
-
-		var->key = key;
-		var->value = value;
+		variable_t var = {key, value};
 		variables[variables_count++] = var;
 	}
+
+	free(lines);
 
 	return 0;
 }
@@ -110,7 +106,7 @@ int bms_dotenv_init(char* path) {
 		return -1;
 	}
 
-	variables = calloc(100, sizeof(variable_t*));
+	variables = calloc(50, sizeof(variable_t));
 
 	if(parse_dotenv(buffer) < 0) {
 		fprintf(stderr, "[ERROR] In function parse_dotenv(). Error while parsing file\n");
@@ -128,9 +124,6 @@ int bms_dotenv_init(char* path) {
 }
 
 void bms_dotenv_finalize() {
-	for(int i = 0; i < variables_count; i++) {
-		free(variables[i]);
-	}
 	free(variables);
 }
 
@@ -141,7 +134,7 @@ static int bms_list_variables() {
 	}
 
 	for(int i = 0; i < variables_count; i++) {
-		printf("%s: %s\n", variables[i]->key, variables[i]->value);
+		printf("%s: %s\n", variables[i].key, variables[i].value);
 	}
 
 	return 0;
@@ -157,8 +150,8 @@ char* bms_dotenv_get(char* s) {
 	}
 
 	for(int i = 0; i < variables_count; i++) {
-		if(strcmp(variables[i]->key, s) == 0) {
-			return variables[i]->value;
+		if(strcmp(variables[i].key, s) == 0) {
+			return variables[i].value;
 		}
 	}
 

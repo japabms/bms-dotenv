@@ -11,7 +11,7 @@ typedef struct variable_t{
 } variable_t;
 
 static int variables_count = 0;
-static variable_t** variables = NULL;
+static variable_t* variables = NULL;
 
 
 //
