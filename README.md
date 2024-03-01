@@ -1,11 +1,8 @@
 # C .env parser  
 
-- It will not put the .env variables to the actual system environment, just read the file, store the values in memory and you can retrieve it with the `bms_dotenv_get()`.
 - Will find a .env file and will load the values from it. The values must me KEY=VALUE, without any space. And it will not remove quotes from VALUES.
 - Support comment with #.
 - It will probably only work in Unix systems.
-
-I made it in like 3 hours, so it's not refined yet. But i think it is usable.
 
 ## Build / Install
 
@@ -27,24 +24,24 @@ If you install it, you can link it with the flag -lbmsdotenv when compiling.
 # API
 API_KEY=1234567890abcdefghijklmnopqrstuvwxyz
 API_URL=https://api.exemplo.com/v1
+APP_NAME=Normar Tudo Normar
 ```
 
 main.c
 ```c
 #include <bms_dotenv.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[])
 {
 
 	bms_dotenv_init(NULL);
-	char* api_key = bms_dotenv_get("API_KEY");
-	char* api_url = bms_dotenv_get("API_URL");
-
-	// will clear all memory allocated from bms_dotenv_init();
-	// and will clear the values from api_url and api_key
-	bms_dotenv_finalize(); 
-	// use strdup(bms_dotenv_get("KEY")); for the memory "persist"
-	// after the finalize
+	char* api_key = getenv("API_KEY");
+	char* api_url = getenv("API_URL");
+	char* app_name = getenv("APP_NAME");
+	puts(api_key); 
+	puts(api_url);
+	puts(app_name);
 
 	return EXIT_SUCCESS;
 }

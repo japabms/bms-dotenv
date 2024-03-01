@@ -4,26 +4,11 @@
 #include <stdio.h>
 
 
-//
-// Will retrieve the values from the .env file
-// return 0 for sucess and -1 for failure
-//
-// if path equals NULL, it will search in the current directory of the program
-int bms_dotenv_init(char* path);
+/*
+ * Will retrieve the values from the .env file
+ * if path equals NULL, it will search in the current directory of the program
+*/
+void bms_dotenv_init(char* path);
 
-//
-// Try to get value from .env based on the key
-//
-// Key is case sensitive, so you must type the exact value from .env file
-// to get the correct value
-//
-// Will return NULL if can't get it or if bms_dotenv_init() is not called;
-//
-char* bms_dotenv_get(char* key);
-
-//
-// Cleanup memory allocated from dotenv_init()
-//
-void bms_dotenv_finalize();
 
 #endif // !BMS_DOTENV_H
